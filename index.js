@@ -7,51 +7,45 @@ const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
 
-//initially vairables need????
 
-let oldTab = userTab;
+let currentTab = userTab;
 const API_KEY = "d1845658f92b31c64bd94f06f7188c9c";
 oldTab.classList.add("current-tab");
 getfromSessionStorage();
 
-function switchTab(newTab) {
-    if(newTab != oldTab) {
-        oldTab.classList.remove("current-tab");
-        oldTab = newTab;
-        oldTab.classList.add("current-tab");
+function switchTab(clickedTab) {
+    if(clickedTab != currentTab) {
+        currentTab.classList.remove("current-tab");
+        currentTab = clickedTab;
+        currentTab.classList.add("current-tab");
 
         if(!searchForm.classList.contains("active")) {
-            //kya search form wala container is invisible, if yes then make it visible
+            // if search weather tab was closed
             userInfoContainer.classList.remove("active");
             grantAccessContainer.classList.remove("active");
             searchForm.classList.add("active");
         }
         else {
-            //main pehle search wale tab pr tha, ab your weather tab visible karna h 
+            // if Your weather tab was closed
             searchForm.classList.remove("active");
             userInfoContainer.classList.remove("active");
-            //ab main your weather tab me aagya hu, toh weather bhi display karna poadega, so let's check local storage first
-            //for coordinates, if we haved saved them there.
             getfromSessionStorage();
         }
     }
 }
 
 userTab.addEventListener("click", () => {
-    //pass clicked tab as input paramter
     switchTab(userTab);
 });
 
 searchTab.addEventListener("click", () => {
-    //pass clicked tab as input paramter
     switchTab(searchTab);
 });
 
-//check if cordinates are already present in session storage
 function getfromSessionStorage() {
     const localCoordinates = sessionStorage.getItem("user-coordinates");
+    //check if cordinates are already present in session storage
     if(!localCoordinates) {
-        //agar local coordinates nahi mile
         grantAccessContainer.classList.add("active");
     }
     else {
@@ -81,14 +75,13 @@ async function fetchUserWeatherInfo(coordinates) {
     }
     catch(err) {
         loadingScreen.classList.remove("active");
-        //HW
+        console.log('Not Found');
 
     }
 
 }
 
 function renderWeatherInfo(weatherInfo) {
-    //fistly, we have to fethc the elements 
 
     const cityName = document.querySelector("[data-cityName]");
     const countryIcon = document.querySelector("[data-countryIcon]");
@@ -119,7 +112,7 @@ function getLocation() {
         navigator.geolocation.getCurrentPosition(showPosition);
     }
     else {
-        //HW - show an alert for no gelolocation support available
+        console.log("Geoloction Not supporte");
     }
 }
 
@@ -165,6 +158,7 @@ async function fetchSearchWeatherInfo(city) {
         renderWeatherInfo(data);
     }
     catch(err) {
-        //hW
+        loadingScreen.classList.remove("active");
+        console.log('Not Found');
     }
 }
